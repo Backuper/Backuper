@@ -1,13 +1,18 @@
 const { Client, Collection } = require("discord.js")
 const fs = require("fs")
 require("dotenv").config();
+let config = require("./config.json")
 let cmdDir = fs.readdirSync("./commands/")
 
 let client = new Client()
 client.commands = new Collection()
 client.groups = []
+client.config = config
 
-for(let dir of CmdDir) {
+const db = require("./utils/database")
+client.con = db
+
+for(let dir of cmdDir) {
     client.groups.push(dir)
     console.log("Loading command category " + dir + ".")
     let group = fs.readdirSync(`./commands/${dir}`)
@@ -20,17 +25,21 @@ for(let dir of CmdDir) {
         client.commands.set(commandFile.split(".")[0], cmd)
     }
 }
-f
-fs.readdirSync("./events", (err, files) => {
-    if(err) {
-        return console.log(err)
+
+fs.readdir("./events", (err, files) => {
+    if (err) {
+      return console.error(err);
     }
     files.forEach((file) => {
-        console.log("Loading event " + file.split(".")[0] + ".");
-        const event = require(`./events/${file}`);
-    let eventName = file.split(".")[0];
-    client.on(eventName, event.bind(null, client));
-    })
-})
+      if (!file.endsWith(".js")) {
+        return;
+      }
+      console.log("Loading event " + file.split(".")[0] + ".");
+      const event = require(`./events/${file}`);
+      let eventName = file.split(".")[0];
+      client.on(eventName, event.bind(null, client));
+    });
+});
+
 
 client.login(process.env.TOKEN)
