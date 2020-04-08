@@ -3,4 +3,5 @@ const con = new Sequelize(process.env.mysqldatabase, process.env.mysqluser, proc
     host: process.env.mysqlhost,
     dialect: 'mysql'
 })
+con.sync()
 module.exports = con
