@@ -1,7 +1,7 @@
 var randomstring = require("randomstring");
 const { MessageEmbed } = require("discord.js")
 let con = require("../../utils/database")
-//let backup = require("../../handlers/backup")
+let backup = require("../../handlers/backuphandler")
 module.exports.run = async (client, message, args) => {
     let values = ["create", "load", "list"]
     let value = args[0]
@@ -42,6 +42,9 @@ module.exports.run = async (client, message, args) => {
             colletcor2.on("collect", async (r) => {
                 reply.delete()
             })
+        }
+        if(values.includes("list")) {
+            backup.list(client, message.member.id, message.channel)
         }
     }
 }
