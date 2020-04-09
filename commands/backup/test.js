@@ -6,7 +6,8 @@ module.exports.run = async (client, message, args) => {
     
     let backupid = randomstring.generate(10);
     console.log(backupid);
-    await backup.create(client, backupid, message, args) 
+    //await backup.create(client, backupid, message, args) 
+    await backup.load(client, backupid, message, args);
 
     let embed = new MessageEmbed()
     .setFooter(client.user.username, client.user.displayAvatarURL())

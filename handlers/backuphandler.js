@@ -17,30 +17,12 @@ module.exports.load = async (client, backupid, message, args) => {
     await msg.react("✅")
     await msg.react("❌")
 
-    const restorefilter = (reaction, user) => { return reaction.emoji.name === '👌' && user.id === message.author.id;  };
-    const restore = message.createReactionCollector(filter, { time: 20000 });
-
-    restore.on('collect', (reaction, reactionCollector) => {
-        load(client, backupid, message, args, con);
-    });
+    const restorefilter = (reaction, user) => reaction.emoji.name === '✅';
+    const collector = await message.createReactionCollector(restorefilter, { time: 15000 });
+    await collector.on('collect', r => console.log(`Collected ${r.emoji.name}`));
+    collector.on('end', collected => msg.delete());
     
-    restore.on('end', collected => {
-        msg.reactions.removeAll();
-    });
 
-    const cancelfilter = (reaction, user) => { return reaction.emoji.name === '👌' && user.id === message.author.id;  };
-    const cancel = message.createReactionCollector(filter, { time: 20000 });
-
-    cancel.on('collect', (reaction, reactionCollector) => {
-        load(client, backupid, message, args, con);
-    });
-    
-    cancel.on('end', collected => {
-        msg.reactions.removeAll();
-    });
-
-
-    load(client, backupid, message, args, con);
 }
 
 module.exports.list = async (client, userid, channel) => {
