@@ -1,7 +1,19 @@
-const Sequelize = require('sequelize');
-const con = new Sequelize(process.env.mysqldatabase, process.env.mysqluser, process.env.mysqlpassword, {
+const mysql = require("mysql2")
+let con = mysql.createConnection({
     host: process.env.mysqlhost,
-    dialect: 'mysql'
+    user: process.env.mysqluser,
+    password: process.env.mysqlpassword,
+    database: process.env.mysqldatabase
 })
-con.sync()
-module.exports = con
+
+let backupscon = mysql.createConnection({
+    host: process.env.mysql2host,
+    user: process.env.mysql2user,
+    password: process.env.mysql2password,
+    database: process.env.mysql2database
+})
+
+
+module.exports = con;
+module.exports.backuper = con;
+module.exports.backups = backupscon;

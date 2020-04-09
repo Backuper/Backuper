@@ -3,14 +3,14 @@ const fs = require("fs")
 require("dotenv").config();
 let config = require("./config.json")
 let cmdDir = fs.readdirSync("./commands/")
+const db = require("./utils/database")
 
 let client = new Client()
 client.commands = new Collection()
 client.groups = []
 client.config = config
-
-const db = require("./utils/database")
 client.con = db
+
 
 for(let dir of cmdDir) {
     client.groups.push(dir)

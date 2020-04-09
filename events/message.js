@@ -14,6 +14,6 @@ module.exports = async (client, message) => {
     }
     let commandFile = client.commands.get(cmd.slice(prefix.length))
     if(commandFile) {
-        commandFile.run(prefix, cmd, args, message, client)
+        commandFile.run(client, message, args)
     }
 }
