@@ -1,3 +1,10 @@
 {
-    "prefix": "bc+"
+    "prefix": "bc+",
+    "status": "idle",
+    "activityType": "WATCHING",
+    "activities": [
+        "bc+help",
+        "Backups",
+        "over $guild Guilds"
+    ]
 }

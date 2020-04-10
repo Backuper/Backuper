@@ -5,6 +5,7 @@ let backup = require("../../handlers/backuphandler")
 module.exports.run = async (client, message, args) => {
     let values = ["create", "load", "list"]
     let value = args[0]
+    //bc+backup load ID
     if(!values.includes(value)) {
         let embed = new MessageEmbed()
         .setTitle("Backups")
@@ -25,22 +26,26 @@ module.exports.run = async (client, message, args) => {
             }, 12000);
             return
         }
-
+        
         if(value.includes("create")) {
             let backupid = randomstring.generate(10);
             await backup.create(client, backupid, message, args);
 
-            let embed = new MessageEmbed()
-            .setFooter(client.user.username, client.user.displayAvatarURL())
-            .setTitle("Backup created Succsesfully.")
-            .setDescription("Backup ID: " + backupid + "\n\nUse bc+backup load " + backupid + " to Put your server back to this state.")
+        }
 
-            message.channel.send(embed)
-        }
         if(value.includes("load")){
-            backup.load(client, args[BACKUPIDARGHIER], message, args)
+            if(args[1]){
+                backup.load(client, args[1], message, args)
+            }else{
+                let backuperrorembed = new MessageEmbed()
+                .setTitle("Backup - Load")
+                .setDescription("Please enter a Backupid")
+                return message.channel.send(backuperrorembed)
+            }
+            
         }
-        if(values.includes("list")) {
+
+        if(value.includes("list")) {
             backup.list(client, message.member.id, message.channel)
         }
         
