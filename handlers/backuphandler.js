@@ -5,7 +5,27 @@ const load = require("./backupmethods/load")
 const list = require("./backupmethods/list")
 
 module.exports.create = async (client, backupid, message, args) => {
-    create(client, backupid, message, args, con);
+    let embed = new MessageEmbed()
+    .setTitle("Backup")
+    .setDescription(`Are you sure that you wan to create a Backup from ${message.guild.name}?`)
+    
+    let reply = await message.channel.send(embed)
+
+    reply.react("✅")
+    reply.react("❌")
+
+    let collector = reply.createReactionCollector((reaction, user) => reaction.emoji.name === "✅" && user.id == message.member.id, {time: 20000})
+    let colletcor2 = reply.createReactionCollector((reaction, user) => reaction.emoji.name === "❌" && user.id == message.member.id, {time: 20000})
+
+    collector.on("collect", async (r) => {
+        reply.delete()
+        create(client, backupid, message, args, con);
+    })
+    
+    colletcor2.on("collect", async (r) => {
+        reply.delete()
+    })
+    
 }
 
 module.exports.load = async (client, backupid, message, args) => {
@@ -17,11 +37,22 @@ module.exports.load = async (client, backupid, message, args) => {
     await msg.react("✅")
     await msg.react("❌")
 
-    const restorefilter = (reaction, user) => reaction.emoji.name === '✅';
-    const collector = await message.createReactionCollector(restorefilter, { time: 15000 });
-    await collector.on('collect', r => console.log(`Collected ${r.emoji.name}`));
-    collector.on('end', collected => msg.delete());
-    
+    const restorefilter = (reaction, user) => reaction.emoji.name === '✅' && user.id === message.author.id;
+    const restore = await msg.createReactionCollector(restorefilter, { time: 15000 });
+    restore.once('collect', r => {
+        console.log("Restoring: " + message.guild.name);
+        msg.delete()
+        load(client, backupid, message, args, con);
+    });
+
+    const cancelfilter = (reaction, user) => reaction.emoji.name === '❌' && user.id === message.author.id;
+    const cancel = await msg.createReactionCollector(cancelfilter, { time: 15000 });
+    cancel.once('collect', r => {
+        console.log("Restoring canceled: " + message.guild.name);
+        msg.delete()
+        load(client, backupid, message, args, con);
+    });
+    cancel.on('end', collected => msg.delete());
 
 }
 

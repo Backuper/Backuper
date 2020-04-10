@@ -27,24 +27,22 @@ module.exports.run = async (client, message, args) => {
         }
 
         if(value.includes("create")) {
+            let backupid = randomstring.generate(10);
+            await backup.create(client, backupid, message, args);
+
             let embed = new MessageEmbed()
-            .setTitle("Backup")
-            .setDescription(`Are you sure that you wan to create a Backup from ${message.guild.name}?`)
-            let reply = await message.channel.send(embed)
-            reply.react("✅")
-            reply.react("❌")
-            let collector = reply.createReactionCollector((reaction, user) => reaction.emoji.name === "✅" && user.id == message.member.id, {time: 20000})
-            collector.on("collect", async (r) => {
-                reply.delete()
-                // Function hier
-            })
-            let colletcor2 = reply.createReactionCollector((reaction, user) => reaction.emoji.name === "❌" && user.id == message.member.id, {time: 20000})
-            colletcor2.on("collect", async (r) => {
-                reply.delete()
-            })
+            .setFooter(client.user.username, client.user.displayAvatarURL())
+            .setTitle("Backup created Succsesfully.")
+            .setDescription("Backup ID: " + backupid + "\n\nUse bc+backup load " + backupid + " to Put your server back to this state.")
+
+            message.channel.send(embed)
+        }
+        if(value.includes("load")){
+            backup.load(client, args[BACKUPIDARGHIER], message, args)
         }
         if(values.includes("list")) {
             backup.list(client, message.member.id, message.channel)
         }
+        
     }
 }
