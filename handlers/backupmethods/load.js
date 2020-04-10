@@ -14,31 +14,37 @@ module.exports = async (client, backupid, message, args, con) => {
                 console.log("Deleting Channel: " + channel.name);
                 channel.delete();
             })
-
+            
             //RESTORING SERVER
-            await con.backups.query("SELECT * FROM `backup_" + backupid + "_general`", [], async (error, information) => {
+            con.backups.query("SELECT * FROM `backup_" + backupid + "_general`", [], async (error, information) => {
                 message.guild.setName(information[0].guildname);
                 message.guild.setRegion(information[0].region);
                 message.guild.setVerificationLevel(information[0].modlevel);
             });
 
-            await con.backups.query("SELECT * FROM `backup_" + backupid + "_roles`", [], async (error, roles) => {
+            con.backups.query("SELECT * FROM `backup_" + backupid + "_roles`", [], async (error, roles) => {
+                if(error) throw error;
+                console.log(roles);
                 roles.forEach(role => {
+                    console.log("Creating role: " + role.name);
                     message.guild.roles.create({
                         data: {
-                          name: role.name,
+                          name: role.name.toString(),
                           color: role.color,
                           hoist: role.hoist,
+                          position: role.position,
                           permissions: role.permissions,
                           mentionable: role.mentionable
                         },
-                        reason: 'we needed a role for Super Cool People',
-                      })
+                        reason: "LOl"
+                    })
                        
                 })                 
             });
 
-            await con.backups.query("SELECT * FROM `backup_" + backupid + "_channels`", [], async (error, channels) => {
+            con.backups.query("SELECT * FROM `backup_" + backupid + "_channels`", [], async (error, channels) => {
+                if(error) throw error;
+                console.log(channels);
                 channels.forEach(channel => {
                     message.guild.channels.create(channel.name, {
                             type: channel.type,
@@ -46,9 +52,9 @@ module.exports = async (client, backupid, message, args, con) => {
                             nsfw: channel.nsfw,
                             rateLimitPerUser: channel.ratelimit,
                             permissionOverwrites: JSON.parse(channel.permissions),
-                            position: channel.position,
-                            reason: 'Needed a cool new channel' 
-                        })
+                            position: channel.position
+                        }
+                    )
                        
                 })                 
             });
