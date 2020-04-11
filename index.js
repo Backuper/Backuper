@@ -10,7 +10,7 @@ client.commands = new Collection()
 client.groups = []
 client.config = config
 client.con = db
-
+client.timeout = ms => new Promise(res => setTimeout(res, ms));
 
 for(let dir of cmdDir) {
     client.groups.push(dir)
