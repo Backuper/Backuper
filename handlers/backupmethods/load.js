@@ -10,7 +10,7 @@ module.exports = async (client, backupid, message, args, con) => {
                 role.delete();
             })*/
 
-            await for (let index = 0; index < message.guild.roles.cache.length; index++) {
+            for (let index = 0; index < message.guild.roles.cache.length; index++) {
                 let role = message.guild.roles.cache[index];
                 if(role.name === "@everyone" || role.managed) return;
                 console.log("Deleting Role: " + role.name);
